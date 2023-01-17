@@ -17,6 +17,7 @@ import com.su.conso.metasdiarias.R;
 import com.su.conso.metasdiarias.adapter.MyAdapter;
 import com.su.conso.metasdiarias.adapter.RecyclerItemClick;
 import com.su.conso.metasdiarias.bancoDados.TarefaDAO;
+import com.su.conso.metasdiarias.databinding.ActivityMainBinding;
 import com.su.conso.metasdiarias.model.Tarefas;
 
 import java.util.ArrayList;
@@ -24,9 +25,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private ImageButton editarTarefa,btnInfo,btnSemAcao;
+    private ActivityMainBinding binding;
     private List<Tarefas> listTarefa = new ArrayList<>();
-    private RecyclerView recyclerView;
     private MyAdapter adapter;
     private TarefaDAO tarefaDAO;
     private Tarefas tarefasSelec;
@@ -34,22 +34,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
         tarefaDAO = new TarefaDAO(getApplicationContext());
 
-        findView();
         clicksBtns();
         deletarVazio();
         clickRecycler();
 
-    }
-
-    public void findView(){
-        btnSemAcao = findViewById(R.id.imageButton2);
-        btnInfo = findViewById(R.id.btnInfo);
-        editarTarefa = findViewById(R.id.editarMetas);
-        recyclerView = findViewById(R.id.recyclerView);
     }
 
     private void carregarListaTarefa(){
@@ -57,10 +51,10 @@ public class MainActivity extends AppCompatActivity {
 
         adapter = new MyAdapter(listTarefa);
 
-        recyclerView.setAdapter(adapter);
+        binding.recyclerView.setAdapter(adapter);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setHasFixedSize(true);
+        binding.recyclerView.setLayoutManager(layoutManager);
+        binding.recyclerView.setHasFixedSize(true);
         Collections.reverse(listTarefa);
         adapter.notifyDataSetChanged();
     }
@@ -72,26 +66,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void clicksBtns(){
-        editarTarefa.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), NovaTarefaActivity.class));
-            }
-        });
+        binding.editarMetas.setOnClickListener(view ->
+                startActivity(new Intent(getApplicationContext(), NovaTarefaActivity.class))
+        );
         
-        btnInfo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "Criado por: Isaac lima, esse app e para minha metas!", Toast.LENGTH_LONG).show();
-            }
-        });
+        binding.btnInfo.setOnClickListener(view ->
+        msg("Criado por: Isaac lima, esse app e para minha metas!"));
         
-        btnSemAcao.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "Em manutenção.", Toast.LENGTH_SHORT).show();
-            }
-        });
+        binding.imgProgressoTotal.setOnClickListener(view ->
+        msg("Em desenvolvimento!"));
     }
 
     public void deletarVazio(){
@@ -104,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void clickRecycler(){
-        recyclerView.addOnItemTouchListener(new RecyclerItemClick(getApplicationContext(), recyclerView,
+        binding.recyclerView.addOnItemTouchListener(new RecyclerItemClick(getApplicationContext(),   binding.recyclerView,
                 new RecyclerItemClick.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
@@ -131,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
                                 TarefaDAO tarefaDAO = new TarefaDAO(getApplicationContext());
                                 if (tarefaDAO.deletar(tarefasSelec)){
                                     carregarListaTarefa();
-                                    Toast.makeText(MainActivity.this, "Apagado com sucesso", Toast.LENGTH_SHORT).show();
+                                    msg("Apagado com sucesso");
                                 }else{
 
                                 }
@@ -148,5 +131,9 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 }));
+    }
+
+    private void msg(String txt){
+        Toast.makeText(this, txt, Toast.LENGTH_SHORT).show();
     }
 }

@@ -16,12 +16,14 @@ import android.widget.Toast;
 
 import com.su.conso.metasdiarias.R;
 import com.su.conso.metasdiarias.bancoDados.TarefaDAO;
+import com.su.conso.metasdiarias.databinding.ActivityNovaTarefaBinding;
 import com.su.conso.metasdiarias.model.Tarefas;
 
 import java.time.LocalDate;
 
 public class NovaTarefaActivity extends AppCompatActivity {
     private EditText editTituloTarefa;
+    private ActivityNovaTarefaBinding binding;
     private TextView txtPadrao;
     private Button btnSalvar;
     private ImageButton btnVoltar;
@@ -31,7 +33,9 @@ public class NovaTarefaActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_nova_tarefa);
+        binding = ActivityNovaTarefaBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
         findView();
 
         btnSalvar.setOnClickListener(new View.OnClickListener() {
